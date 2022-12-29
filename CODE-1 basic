@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+#define USERNAME_LEN 20
+#define PASSWORD_LEN 20
+
+int main(void)
+{
+    char username[USERNAME_LEN];
+    char password[PASSWORD_LEN];
+
+    printf("Enter your username: ");
+    scanf("%s", username);
+    printf("Enter your password: ");
+    scanf("%s", password);
+
+    if (strcmp(username, "admin") == 0 && strcmp(password, "123456") == 0)
+    {
+        printf("Login successful!\n");
+    }
+    else
+    {
+        printf("Invalid username or password!\n");
+    }
+
+    return 0;
+}
