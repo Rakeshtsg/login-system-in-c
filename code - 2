@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <crypt.h>
+
+#define USERNAME_LEN 20
+#define PASSWORD_LEN 20
+#define SALT_LEN 2
+#define HASHED_PASSWORD_LEN 13
+
+void get_hashed_password(const char *password, char *hashed_password)
+{
+    char salt[SALT_LEN + 1] = "$1$";
+    char *hash = crypt(password, salt);
+    strncpy(hashed_password, hash, HASHED_PASSWORD_LEN);
+}
+
+int main(void)
+{
+    char username[USERNAME_LEN];
+    char password[PASSWORD_LEN];
+
+    printf("Enter your username: ");
+    scanf("%s", username);
+    printf("Enter your password: ");
+    scanf("%s", password);
+
+    // Read usernames and hashed passwords from the file "passwd"
+    char line[USERNAME_LEN + HASHED_PASSWORD_LEN + 2];
+    bool found = false;
+    FILE *fp = fopen("passwd", "r");
+    while (fgets(line, sizeof(line), fp))
+    {
+        char stored_username[USERNAME_LEN];
+        char stored_hashed_password[HASHED_PASSWORD_LEN];
+        sscanf(line, "%s %s", stored_username, stored_hashed_password);
+        if (strcmp(username, stored_username) == 0)
+        {
+            char hashed_password[HASHED_PASSWORD_LEN];
+            get_hashed_password(password, hashed_password);
+            if (strcmp(hashed_password, stored_hashed_password) == 0)
+            {
+                found = true;
+                break;
+            }
+        }
+    }
+    fclose(fp);
+
+    if (found)
+    {
+        printf("Login successful!\n");
+    }
+    else
+    {
+        printf("Invalid username or password!\n");
+    }
+
+    return 0;
+}
